@@ -33,7 +33,7 @@ class Looper{
     
     const uint8_t start_rec_cmd = 10;   //Record
     const uint8_t stop_rec_cmd = 11;    //Record
-    const uint8_t overdub_cmd = 10;     //Overdub
+    const uint8_t overdub_cmd = 10;     //Overdub, Equal to Record because of Sooperlooper
     const uint8_t clear_loop_cmd = 13;  //Clear Loop?
     const uint8_t next_loop_cmd = 14;   //Next Loop
     const uint8_t prev_loop_cmd = 15;   //Prev Loop

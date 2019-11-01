@@ -1,0 +1,6 @@
+0 cc 10  hit record_or_overdub -3  0 1  norm 0 127
+0 cc 11  hit pause -3  0 1  norm 0 127
+0 cc 13  hit undo_all -3  0 1  norm 0 127
+0 cc 14  set select_next_loop -2  0 1  norm 0 127
+0 cc 16  hit pause -2  0 1  norm 0 127
+0 cc 17  hit solo -3  0 1  norm 0 127

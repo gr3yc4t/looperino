@@ -15,7 +15,7 @@
 
 #define BOUNCE_WITH_PROMPT_DETECTION
 //----------------- COMPILATOR -------------------
-//#define DEBUG
+#define DEBUG
 #define BLUETOOTH 0     //No bluetooth support
 #define INPUTS 0        //No input is enabled, like loop number or tap tempo
 
