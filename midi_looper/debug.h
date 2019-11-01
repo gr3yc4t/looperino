@@ -1,7 +1,7 @@
 #ifndef DEBUG_GUARD
 #define DEBUG_GUARD
 
-
+//#define DEBUG
 
 inline void debug(const char *message){
   #ifndef DEBUG

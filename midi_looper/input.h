@@ -2,7 +2,7 @@
 // Suspended for now
 //#include <ArduinoTapTempo.h>
 
-#define DEBUG
+//#define DEBUG
 
 #include "debug.h"
 

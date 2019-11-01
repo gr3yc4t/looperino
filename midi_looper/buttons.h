@@ -6,25 +6,35 @@
 #ifndef BUTTONS_H_GUARD
 #define BUTTONS_H_GUARD
 
+//----------------- COMPILATOR -------------------
+//#define DEBUG
+#define BLUETOOTH 0     //No bluetooth support
+#define INPUTS 0        //No input is enabled, like loop number or tap tempo
 
 #include "config.h"     //For retrieving button's pins
 #include "hold.h"       //For initializing BUTTONS_H_GUARD
 
 
 
-BounceHeld recBounce = BounceHeld(750); // Instantiate a Bounce object
-BounceHeld stopBounce = BounceHeld(1000); // Held for 1 sec
-BounceHeld nextBounce = BounceHeld(800); // Instantiate a Bounce object
-BounceHeld editBounce = BounceHeld(800); // Instantiate a Bounce object
-BounceHeld undoBounce = BounceHeld(2000); // Held for 2 sec
-BounceHeld soloBounce = BounceHeld(1500); // Instantiate a Bounce object
-
-BounceHeld holdBounce = BounceHeld(1500); // Instantiate a Bounce object
-Bounce loopInputBounce = Bounce(); // Instantiate a Bounce object
-Bounce tapTempoBounce = Bounce();
+extern BounceHeld recBounce;
+extern BounceHeld stopBounce;
+extern BounceHeld nextBounce;
+extern BounceHeld editBounce;
+extern BounceHeld undoBounce;
+extern BounceHeld soloBounce;
 
 
-void setPinMode();
+#if INPUTS
+extern BounceHeld holdBounce;
+extern Bounce loopInputBounce;
+extern Bounce tapTempoBounce;
+#endif
+
+
+
+
+
+void setPinModeRoutine();
 void enableBounce();
 void updateButtons();
 
@@ -35,7 +45,7 @@ void updateButtons();
  */
 void initializeButtons(){
 
-    setPinMode();   
+    setPinModeRoutine();   
 
     enableBounce();
 
@@ -45,7 +55,7 @@ void initializeButtons(){
  *  @brief Setup the pin mode of station's components
  */
 
-void setPinMode(){
+void setPinModeRoutine(){
     //------------------------------------------------------
     pinMode(REC_BTN, INPUT);
     digitalWrite(REC_BTN, LOW);

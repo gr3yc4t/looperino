@@ -2,12 +2,19 @@
 #define LOOPER_H_GUARD
 
 
+#include <midi_Defs.h>
+#include <midi_Message.h>
+#include <midi_Namespace.h>
+#include <midi_RingBuffer.h>
+#include <midi_Settings.h>
 #include <MIDI.h>
 
-#define DEBUG
-#include "debug.h"
 
 MIDI_CREATE_DEFAULT_INSTANCE();
+
+
+//#define DEBUG
+#include "debug.h"
 
 #include "loop.h"
 
@@ -15,7 +22,7 @@ MIDI_CREATE_DEFAULT_INSTANCE();
 
 
 
-#define MAX_LOOP 32
+#define MAX_LOOP 16
 
 
 
@@ -23,10 +30,10 @@ class Looper{
 
   private: 
     //@todo Use enum instead of list of consts
-    /*
+    
     const uint8_t start_rec_cmd = 10;   //Record
     const uint8_t stop_rec_cmd = 11;    //Record
-    const uint8_t overdub_cmd = 12;     //Overdub
+    const uint8_t overdub_cmd = 10;     //Overdub
     const uint8_t clear_loop_cmd = 13;  //Clear Loop?
     const uint8_t next_loop_cmd = 14;   //Next Loop
     const uint8_t prev_loop_cmd = 15;   //Prev Loop
@@ -45,7 +52,7 @@ class Looper{
     const uint8_t insert_cmd = 28;      //Insert
     const uint8_t sync_cmd = 29;        //Sync
     const uint8_t trigger_cmd = 30;     //Trigger
-    */
+    /*
     
     enum looper_cmd{
       start_rec_cmd =   10,   //Record
@@ -70,7 +77,7 @@ class Looper{
       sync_cmd =        29,   //Sync
       trigger_cmd =     30    //Trigger
     };
-
+    */
 
 
     const uint8_t loop_initial_code = 50;
@@ -80,7 +87,7 @@ class Looper{
     const uint8_t set_loop_num_input = 100;
 
   
-    unsigned short channel;   //MIDI Channel to use
+    uint8_t channel;   //MIDI Channel to use
     uint16_t elasped_time;    //Don't remember why is there
 
 
@@ -103,17 +110,22 @@ class Looper{
 
   public:
   
-    Looper(unsigned short _channel, unsigned short _initialLoopsNumber){
+    Looper(uint8_t _channel, uint8_t _initialLoopsNumber){
+
+      //MIDI.begin(MIDI_CHANNEL_OMNI);
+
       this->channel = _channel;
       selected_loop = 0;
-
+      
       if (_initialLoopsNumber < MAX_LOOP){
         total_loop = _initialLoopsNumber;
       }else{
         total_loop = 1;
       }
-
+      
       CurrentLoop = &loops[0];
+
+
       debug(CurrentLoop->isRecording());
     }
 
@@ -209,7 +221,7 @@ class Looper{
   
     void startOverdub(){
       if (!CurrentLoop->isOverdubbing()){
-        Serial.println("Looper - Overdub Started");
+        debug("Looper - Overdub Started");
         MIDI.sendControlChange(overdub_cmd, 1, this->channel);
         CurrentLoop->startOverdubbing();
       }
@@ -219,7 +231,7 @@ class Looper{
     void stopOverdub(){
       if (CurrentLoop->isOverdubbing()){
         MIDI.sendControlChange(overdub_cmd, 1, this->channel);
-        Serial.println("Looper - Overdub Stopped");
+        debug("Looper - Overdub Stopped");
         CurrentLoop->stopOverdubbing();
       }
     }

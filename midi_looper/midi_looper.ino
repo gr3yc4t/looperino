@@ -1,3 +1,7 @@
+
+
+
+
 /**
  * MIDI Looper main file
  * 
@@ -10,7 +14,11 @@
 
 
 #define BOUNCE_WITH_PROMPT_DETECTION
-#define DEBUG
+//----------------- COMPILATOR -------------------
+//#define DEBUG
+#define BLUETOOTH 0     //No bluetooth support
+#define INPUTS 0        //No input is enabled, like loop number or tap tempo
+
 
 
 //Load Configs
@@ -21,7 +29,7 @@
 #include "looper.h"
 #include "hold.h"
 
-
+/*
 #if INPUTS
 #include "input.h"
 #endif
@@ -29,7 +37,7 @@
 #if BLUETOOTH
 #include "bluetooth.h"
 #endif
-
+*/
 
 
 uint8_t active_loop;
@@ -40,16 +48,19 @@ uint8_t selected_loop_count;
 int active_rec; //1 if REC is running
 
 
-extern BounceHeld recBounce;
-extern BounceHeld stopBounce;
-extern BounceHeld nextBounce;
-extern BounceHeld editBounce;
-extern BounceHeld undoBounce;
-extern BounceHeld soloBounce;
-extern BounceHeld holdBounce;
-extern Bounce loopInputBounce;
-extern Bounce tapTempoBounce;
+BounceHeld recBounce = BounceHeld(750); // Instantiate a Bounce object
 
+BounceHeld stopBounce = BounceHeld(1000); // Held for 1 sec
+BounceHeld nextBounce = BounceHeld(800); // Instantiate a Bounce object
+BounceHeld editBounce = BounceHeld(800); // Instantiate a Bounce object
+BounceHeld undoBounce = BounceHeld(2000); // Held for 2 sec
+BounceHeld soloBounce = BounceHeld(1500); // Instantiate a Bounce object
+
+#if INPUTS
+BounceHeld holdBounce = BounceHeld(1500); // Instantiate a Bounce object
+Bounce loopInputBounce = Bounce(); // Instantiate a Bounce object
+Bounce tapTempoBounce = Bounce();
+#endif
 
 
 auto recLed = JLed(REC_LED).Blink(200, 200).Forever();
@@ -82,9 +93,32 @@ bool next_held_flag;
 bool solo_held_flag;
 
 
+
+bool debug_led = LOW;
+
+
+
+
+
+void setPinModeRoutine();
+void enableBounce();
+void updateButtons();
+
+
+
+
+
+
+
+
+
 void setup() {
 
   Serial.begin(115200); 
+  
+
+  initializeButtons();
+
     
   pinMode(REC_LED, OUTPUT);
   digitalWrite(REC_LED, LOW);
@@ -118,7 +152,6 @@ void setup() {
 
 void loop() {
 
-
   #if BLUETOOTH
   {
     bluetooth_enabled = digitalRead(BLUETOOTH_SWITCH);
@@ -131,6 +164,7 @@ void loop() {
 
   //Update buttons status
   updateButtons();  
+
 
   #if INPUTS
   if(holdBounce.held()){
@@ -197,12 +231,13 @@ void loop() {
     }
     
     if( recBounce.fell() ){  //Start recording/Stop Overdub
-      
+
       if (rec_held_flag){
         rec_held_flag = false;  //To fix a bug
       }else{
       
         debug("REC BUTTON FELL");
+        
         if (looper.isOverdubbing()){
           debug("Stop Overdubbing");
           looper.stopOverdub(); //Stop Overdubbing
@@ -213,12 +248,13 @@ void loop() {
           debug("Start REC");
           looper.startRecording();  //Start Recording
         }
+        
       }
     }
 
 
     if( stopBounce.held()){
-
+      
       if(looper.isOverdubbing()){
         debug("UNDO ALL");
         looper.undoAll();
@@ -236,11 +272,9 @@ void loop() {
         stop_held_flag = false;
       }else{
         debug("Mute");
-        looper.mute();
+        //looper.mute();
       }
     }
-
-    
   }else{
     /////////////////////////
     //REC present
@@ -252,12 +286,12 @@ void loop() {
     }
     
     if (recBounce.fell()){  //Register Loop
+      digitalWrite(LED_BUILTIN, LOW);   // turn the LED on 
       debug("Stopping REC");
       looper.stopRecording();
     }
     
   }
-
 
 
   //////////////////////////////////////////////
@@ -268,12 +302,14 @@ void loop() {
   if (undoBounce.held()){
     if ( !undo_held_flag){
       looper.redo();
+      debug("REDO");
     }
     undo_held_flag = true;
   }else if (undoBounce.fell()){
 
     if(undo_held_flag){
       undo_held_flag = false;
+      debug("UNDO");
     }else{
       looper.undo();
     }
@@ -298,11 +334,10 @@ void loop() {
   }
   
 
-
   ////////////////////////////////////////
   //////////////// EDIT
   ////////////////////////////////////////
-  
+  /*
     if( editBounce.held() ){
       looper.replace();
       edit_held_flag = true;
@@ -313,9 +348,7 @@ void loop() {
         looper.trigger();
       }
     }
-
-
-
+  */
 
 
 
@@ -323,22 +356,21 @@ void loop() {
    //////////////// LOOP SELECTION  //////////////////////////////
    ///////////////////////////////////////////////////////////////
    if(!looper.isRecording() && !looper.isOverdubbing()){
-
-    if( nextBounce.held() ){
-      looper.multiply();
-      next_held_flag = true;
-    } else if( nextBounce.fell() ){
-       if(next_held_flag){
-         next_held_flag = false;
-        }else{
-          looper.selectNextLoop();
-        }
-    }
-
-
+  
+      if( nextBounce.held() ){
+        looper.multiply();
+        next_held_flag = true;
+      } else if( nextBounce.fell() ){
+         if(next_held_flag){
+           next_held_flag = false;
+          }else{
+            looper.selectNextLoop();
+          }
+      }
 
   
    }
+  
   ///////////////////////////////////////////////////////////////
 
   //                  LED BLINKING PROCEDURES
@@ -353,7 +385,7 @@ void loop() {
       digitalWrite(REC_LED, LOW);
      }
    }
-
+  /*
    if ( looper.isOverdubbing() ) {  // Call code if button transitions from HIGH to LOW
      overdubLed.Update(); //Update REC Led Blinking
    }else{
@@ -362,7 +394,7 @@ void loop() {
       digitalWrite(OVERDUB_LED, LOW);
      }
    }
-
+  */
 
   #if INPUTS
   looper.tempoBlinkLed(TEMPO_LED);

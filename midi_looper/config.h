@@ -12,7 +12,7 @@
 
 
 //----------------- COMPILATOR -------------------
-#define DEBUG
+//#define DEBUG
 #define BLUETOOTH 0     //No bluetooth support
 #define INPUTS 0        //No input is enabled, like loop number or tap tempo
 
@@ -34,7 +34,7 @@
 
 //--------------------- LED ------------------------
 
-#define REC_LED 4
+#define REC_LED LED_BUILTIN
 #define OVERDUB_LED 10
 #define TEMPO_LED 12
 #define HOLD_LED 2
@@ -48,8 +48,7 @@
 
 //--------------- OTHER --------------------------
 
-#define MAX_LOOP 32
-
+#define MAX_LOOP 16
 #define HOLD_TIME 2000
 
 #define INITIAL_LOOP_NUMBER 6
