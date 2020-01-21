@@ -12,3 +12,7 @@ Each of them can be easily installed through the Library Manager present in Ardu
 #### Linux
 - [SooperLooper](https://github.com/essej/sooperlooper)
 - [ttymydi](https://launchpad.net/ttymidi) or [Hairless Midi Serial](https://projectgus.github.io/hairless-midiserial/)
+## Installation
+The code includes conditional compilation to include supports for Button inputs (`INPUTS`) Bluetooth remote control(`BLUETOOTH`) and a OLED display (`DISPLAY_OLED`)
+## Usage
+First of all, you have to figure out if you need ttymidi by checking if your board version supports "MIDI over USB" in this [page](https://github.com/tttapa/MIDI_controller/wiki/MIDI-over-USB).
