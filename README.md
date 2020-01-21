@@ -13,6 +13,8 @@ Each of them can be easily installed through the Library Manager present in Ardu
 - [SooperLooper](https://github.com/essej/sooperlooper)
 - [ttymydi](https://launchpad.net/ttymidi) or [Hairless Midi Serial](https://projectgus.github.io/hairless-midiserial/)
 ## Installation
-The code includes conditional compilation to include supports for Button inputs (`INPUTS`) Bluetooth remote control(`BLUETOOTH`) and a OLED display (`DISPLAY_OLED`)
+The code includes conditional compilation to support for Button inputs (`INPUTS`), Bluetooth remote control(`BLUETOOTH`) and a OLED display (`DISPLAY_OLED`)
 ## Usage
-First of all, you have to figure out if you need ttymidi by checking if your board version supports "MIDI over USB" in this [page](https://github.com/tttapa/MIDI_controller/wiki/MIDI-over-USB).
+First of all, you have to figure out if your board version supports "*MIDI over USB*" in this [page](https://github.com/tttapa/MIDI_controller/wiki/MIDI-over-USB). Otherwise, you have to launch *ttymidi* in order to convert your Arduino serial comminication into a MIDI data.
+
+After that, you have to configure *Sooperlooper* in order to associate MIDI commands to actions (a sample configuration can be found [here](https://github.com/gr3yc4t/looperino/blob/master/sooperlooper_config/loop_station_mapping.slb))
