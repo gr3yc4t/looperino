@@ -1,5 +1,11 @@
 # 🎹 Looperino 🎸
 MIDI Looper based on Sooperlooper and Arduino.
+## Features
+- MIDI command can be associated either when an input button is pressed or holded
+- Display showing looper info (Selected loop, Recording/Overdubbing status)
+- Input tempo (looper bmp) by tapping on an input button
+- Supports for effect knob
+- Supports for bluetooth communication (e.g. flanger or volume control via mobile app)
 ## Requirements
 #### Arduino
 The following libraries are required
@@ -18,3 +24,4 @@ The code includes conditional compilation to support for Button inputs (`INPUTS`
 First of all, you have to figure out if your board version supports "*MIDI over USB*" in this [page](https://github.com/tttapa/MIDI_controller/wiki/MIDI-over-USB). Otherwise, you have to launch *ttymidi* in order to convert your Arduino serial comminication into a MIDI data.
 
 After that, you have to configure *Sooperlooper* in order to associate MIDI commands to actions (a sample configuration can be found [here](https://github.com/gr3yc4t/looperino/blob/master/sooperlooper_config/loop_station_mapping.slb))
+
