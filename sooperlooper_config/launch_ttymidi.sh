@@ -1,2 +1,2 @@
 #!/bin/bash
-ttymidi -v -s /dev/ttyACM1
+ttymidi -v -s /dev/ttyACM0

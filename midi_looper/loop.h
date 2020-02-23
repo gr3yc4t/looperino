@@ -17,6 +17,8 @@ class Loop{
     uint8_t solo;
     uint8_t is_empty;
     uint8_t is_synced;
+    uint8_t is_playing;
+    uint8_t is_muted;
 
 
     uint8_t volume;
@@ -37,7 +39,8 @@ class Loop{
       solo = 0;
       is_empty = 1;
       is_synced = 0;
-
+      is_playing = 0;
+      is_muted = 0;
       volume = 70;
     }
 
@@ -49,6 +52,8 @@ class Loop{
       this->once = 0;
       this->solo = 0;
       this->is_synced = 0;
+      this->is_playing = 0;
+      this->is_muted = 0;
     }
 
     bool isEmpty(){
@@ -95,6 +100,17 @@ class Loop{
       return false;
     }
 
+    bool isPlaying(){
+      if(is_playing == 1)
+        return true;
+      return false;
+    }
+
+    bool isMuted(){
+      if(is_muted == 1)
+        return true;
+      return false;
+    }
 
 
     void sync(){
@@ -109,6 +125,7 @@ class Loop{
 
     void stopRecording(){
       recording = 0;
+      is_playing = 1;
       this->fill();
       debug("Stop Recording");
     }
@@ -120,6 +137,7 @@ class Loop{
 
     void stopOverdubbing(){
       overdubbing = 0;
+      is_playing = 1;
     }
 
 
@@ -128,10 +146,17 @@ class Loop{
     }
 
     void stopSolo(){
-      overdubbing = 0;
+      solo = 0;
+      is_playing = 1;
     }
 
-    
+    void muteLoop(){
+      is_muted = 1;
+    }
+
+    void unmuteLoop(){
+      is_muted = 0;
+    }
   
 };
 

@@ -14,11 +14,12 @@
 
 
 #define BOUNCE_WITH_PROMPT_DETECTION
+
 //----------------- COMPILATOR -------------------
-#define DEBUG
+//#define DEBUG
 #define BLUETOOTH 0     //No bluetooth support
 #define INPUTS 0        //No input is enabled, like loop number or tap tempo
-
+#define DISPLAY_OLED 1
 
 
 //Load Configs
@@ -29,7 +30,7 @@
 #include "looper.h"
 #include "hold.h"
 
-/*
+
 #if INPUTS
 #include "input.h"
 #endif
@@ -37,7 +38,10 @@
 #if BLUETOOTH
 #include "bluetooth.h"
 #endif
-*/
+
+#if DISPLAY_OLED
+#include "display.h"
+#endif
 
 
 uint8_t active_loop;
@@ -73,6 +77,15 @@ Looper looper = Looper(1, INITIAL_LOOP_NUMBER); //Start the loop object
 LooperInput numInput = LooperInput();
 TapTempo tapTempo = TapTempo(TAP_TEMPO_BTN, TEMPO_LED);
 #endif
+
+#if DISPLAY_OLED
+
+Display oled = Display(&looper);
+
+#endif
+
+
+
 
 bool input_switch;
 
@@ -146,6 +159,13 @@ void setup() {
     Bluetooth(BLUETOOTH_SWITCH);
   #endif
 
+  #if DISPLAY_OLED
+    Serial.println("Activating the display");
+    oled.initialize();
+    oled.showLogo();
+    oled.printLooperStatus(true);
+  #endif
+
   input_switch = false;
     
 }
@@ -161,6 +181,11 @@ void loop() {
     }
   }
   #endif
+
+  #if DISPLAY_OLED
+    oled.printLooperStatus();
+  #endif
+
 
   //Update buttons status
   updateButtons();  
@@ -256,7 +281,9 @@ void loop() {
     if( stopBounce.held()){
       
       if(looper.isOverdubbing()){
-        debug("UNDO ALL");
+        debug("Stop Overdub");
+        looper.stopOverdub();
+        delay(500);
         looper.undoAll();
       }else if (!looper.isEmpty()){
         //Execute "Once"
@@ -266,13 +293,13 @@ void loop() {
       
 
       stop_held_flag = true;
-    }else if(stopBounce.wasHeld() && stopBounce.fell() && !looper.isEmpty()){
+    }else if(/*stopBounce.wasHeld() &&*/ stopBounce.fell() && !looper.isEmpty()){
 
       if(stop_held_flag){
         stop_held_flag = false;
       }else{
         debug("Mute");
-        //looper.mute();
+        looper.mute();
       }
     }
   }else{

@@ -24,7 +24,14 @@ MIDI_CREATE_DEFAULT_INSTANCE();
 
 #define MAX_LOOP 16
 
-
+enum LoopStatus{
+    empty,
+    recording,
+    overdubbing,
+    playing,
+    solo,
+    mute
+};
 
 class Looper{
 
@@ -263,8 +270,16 @@ class Looper{
     }
 
     void mute(){
-      debug("MUTE");
-      MIDI.sendControlChange(mute_cmd, 1, this->channel);           
+      if (!CurrentLoop->isMuted()){
+        debug("Loop Muted");
+        CurrentLoop->muteLoop();
+        MIDI.sendControlChange(mute_cmd, 1, this->channel);        
+      }else{
+        debug("Loop Unmuted");
+        CurrentLoop->unmuteLoop();
+        MIDI.sendControlChange(mute_cmd, 1, this->channel);  //Same command for unmuting         
+      }
+           
     }
 
     void replace(){
@@ -327,7 +342,31 @@ class Looper{
       
     }
     
-  
+
+    uint8_t getTotalLoop(){
+      return this->total_loop;
+    }
+
+    uint8_t getCurrentLoop(){
+      return this->selected_loop;
+    }
+
+    LoopStatus getLoopStatus(){
+
+      if(CurrentLoop->isRecording()){
+        return recording;
+      }else if(CurrentLoop->isOverdubbing()){
+        return overdubbing;
+      }else if(CurrentLoop->isEmpty()){
+        return empty;
+      }else if(CurrentLoop->isMuted()){
+        return LoopStatus::mute;
+      }else if(CurrentLoop->isPlaying()){
+        return playing;
+      }
+
+    }
+
 };
 
 
